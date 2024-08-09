@@ -1,0 +1,25 @@
+extends layout 
+
+block content
+  h2 Create a New Contact
+  div.centered
+    form(action="/contacts/new" method="post") 
+      fieldset 
+        dl 
+          dt
+            label(for="firstName") First Name:
+          dd
+            input(type="text" name="firstName" id="firstName" value=first)
+        dl 
+          dt
+            label(for="lastName") Last Name: 
+          dd
+            input(type="text" name="lastName" id="lastName" value=last)
+        dl
+          dt
+            label(for="phoneNumber") Phone Number: 
+          dd
+            input(type="text" name="phoneNumber" id="phoneNumber" value=number placeholder="###-###-####")
+        fieldset
+          input(type="submit" value="Save")
+          button.cancel(formaction="/contacts" formmethod="get") Cancel

@@ -1,0 +1,168 @@
+@import "whitespace-reset.css";
+
+body {
+  background-color: #ffffff;
+  box-sizing: border-box;
+  font: 16px Helvetica, Arial, sans-serif;
+  color: rgb(69, 69, 69);
+}
+
+header,
+main {
+  margin: 2rem auto;
+}
+
+h1,
+h2 {
+  text-align: center;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+table {
+  background-color: #f0f0c0;
+  border-collapse: collapse;
+  margin: 2.5rem auto;
+  text-align: left;
+}
+
+td,
+th {
+  font-size: 1.5rem;
+  padding: 1rem;
+}
+
+thead,
+tbody,
+tr,
+th,
+td {
+  border: 1px solid gray;
+}
+
+td a {
+  background-color: #f0c0c0;
+  border: 1px solid black;
+  border-radius: 1rem;
+  box-shadow: 4px 2px 5px -1px #808080;
+  color: black;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0.5rem 1.5rem;
+  text-decoration: none;
+}
+
+tfoot,
+tfoot tr,
+tfoot td {
+  background-color: #ffffff;
+  border: none;
+}
+
+tfoot {
+  text-align: center;
+}
+
+tfoot a {
+  display: inline-block;
+  margin-top: 2rem;
+}
+
+td a:hover,
+td a:active {
+  background-color: #f08080;
+}
+
+form {
+  margin: 2rem;
+}
+
+fieldset {
+  border: none;
+}
+
+dt,
+dd {
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+dd {
+  margin-bottom: 1.5rem;
+}
+
+dt label {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+dd input[type="text"] {
+  border: 1px solid #a4a4a4;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font: normal 20px "PT Sans", Helvetica, Arial, sans-serif;
+  height: 58px;
+  padding: 15px 20px;
+  width: 100%;
+}
+
+input[type="submit"],
+button.cancel {
+  background-color: #00af4f;
+  border: none;
+  border-radius: 1rem;
+  color: #ffffff;
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  padding: 0.5rem 1.5rem;
+  text-decoration: none;
+}
+
+input[type="submit"]:active,
+input[type="submit"]:hover,
+button.cancel:active,
+button.cancel:hover {
+  background-color: #d13b28;
+  cursor: pointer;
+}
+
+div {
+  display: flex;
+  justify-content: center;
+}
+
+.flash {
+  font-size: 1.25rem;
+  font-weight: bold;
+  list-style-position: inside;
+  margin: 0 2rem;
+  max-width: 100%;
+}
+
+.flash li {
+  margin: 0.5rem auto;
+  padding: 0.5rem 2rem;
+}
+
+.error {
+  background-color: #ffcfbf;
+  color: #ff6633;
+}
+
+.success {
+  background-color: #a0f0a0;
+  color: #33cc99;
+}
+
+.info {
+  background-color: #cbe5f2;
+  color: #3399cc;
+}
