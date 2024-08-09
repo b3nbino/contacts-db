@@ -8,12 +8,16 @@ block content
         th Name
         th Phone Number
         th Groups
+        th Edit Groups
     tbody
       each contact in contacts
         tr
           td #{contact.last_name}, #{contact.first_name}
           td (#{contact.phone_number.slice(0, 3)})-#{contact.phone_number.slice(3, 6)}-#{contact.phone_number.slice(6)}
-          td #{contact.group_name}
+          td #{contact.group_name} 
+          td 
+            a(href=`/contacts/${contact.id}`) +
+          
     tfoot
       tr
         td(colspan="3")

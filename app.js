@@ -60,7 +60,7 @@ app.get("/", (req, res) => {
 
 //Get contacts route handler
 app.get("/contacts", async (req, res) => {
-  let contacts = await res.locals.store.getContacts();
+  let contacts = await res.locals.store.getAllContacts();
   res.render("contacts", { contacts });
 });
 
@@ -113,6 +113,25 @@ app.post(
     }
   }
 );
+
+//Get edit groups page
+app.get("/contacts/:contactId", async (req, res) => {
+  let contactId = req.params.contactId;
+  let contact = await res.locals.store.getContact(contactId);
+  let allGroups = await res.locals.store.getGroups();
+  res.render("edit_groups", { contact, allGroups });
+});
+
+//Add or remove selected group
+app.post("/contacts/:contactId/:groupId", async (req, res) => {
+  let contactId = req.params.contactId;
+  let groupId = req.params.groupId;
+
+  let toggled = await res.locals.store.toggleGroup(contactId, groupId);
+  if (!toggled) throw new Error("Not found.");
+
+  res.redirect(`/contacts/${contactId}`);
+});
 
 // Error handler
 app.use((err, req, res, _next) => {

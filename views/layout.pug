@@ -8,7 +8,8 @@ html(lang="en-US")
 
   body
     header
-      h1 My Contacts Manager
+      h1 
+        a(href="/contacts") My Contacts Manager
 
     - let messageTypes = Object.keys(flash || {});
     if messageTypes.length > 0
