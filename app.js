@@ -55,8 +55,6 @@ app.use((req, res, next) => {
 
 //Home page redirect
 app.get("/", (req, res) => {
-  console.log(req.session);
-
   res.redirect("/contacts");
 });
 
