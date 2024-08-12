@@ -56,7 +56,15 @@ td {
   border: 1px solid gray;
 }
 
-td a {
+thead,
+tbody,
+tr,
+th.editContact,
+td.editContact {
+  border: none;
+}
+
+div a.yes {
   background-color: #f0c0c0;
   border: 1px solid black;
   border-radius: 1rem;
@@ -84,18 +92,23 @@ tfoot a {
   margin-top: 2rem;
 }
 
-td a:hover,
-td a:active {
+div a.yes:hover,
+div a.yes:active {
   background-color: #f08080;
 }
 
 ul {
-  display: flex;
+  flex-wrap: wrap;
+  box-sizing: border-box;
   justify-content: center;
+  display: flex;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 form {
   margin: 2rem;
+  justify-content: center;
 }
 
 fieldset {
@@ -154,8 +167,7 @@ input.newGroup {
   border-radius: 8px;
   font: normal 20px "PT Sans", Helvetica, Arial, sans-serif;
   height: 15px;
-  margin-left: 20px;
-  margin-right: 20px;
+  margin: 20px;
   padding: 15px 20px;
   width: 40%;
 }
@@ -213,4 +225,50 @@ div {
 li.in,
 form {
   color: #3399cc;
+  display: inline;
+  margin: 10px;
+}
+
+button.delete {
+  background-color: transparent;
+  border: none;
+  color: transparent;
+  cursor: pointer;
+  height: 24px;
+  width: 24px;
+}
+
+button.delete {
+  background: transparent url("../images/icon_delete.png") 0 3px no-repeat;
+  height: 27px;
+  opacity: 0.4;
+  margin-left: -30px;
+  right: 20px;
+  width: 24px;
+}
+
+button.delete:hover {
+  opacity: 1;
+}
+
+a.add {
+  background: transparent url("../images/icon_add.png") 0 0 no-repeat;
+  content: "";
+  display: inline-block;
+  height: 28px;
+  margin: 0 7px 0 0;
+
+  -moz-transition: transform 200ms linear;
+  -o-transition: transform 200ms linear;
+  -webkit-transition: transform 200ms linear;
+
+  vertical-align: -6px;
+  width: 28px;
+}
+
+a.add:hover {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+
+  -moz-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
 }

@@ -115,22 +115,22 @@ app.post(
 );
 
 //Get edit groups page
-app.get("/contacts/edit_groups/:contactId", async (req, res) => {
+app.get("/contacts/edit_contact/:contactId", async (req, res) => {
   let contactId = req.params.contactId;
   let contact = await res.locals.store.getContact(contactId);
   let allGroups = await res.locals.store.getGroups();
-  res.render("edit_groups", { contact, allGroups, contactId });
+  res.render("edit_contact", { contact, allGroups, contactId });
 });
 
 //Add or remove selected group
-app.post("/contacts/edit_groups/:contactId/:groupId", async (req, res) => {
+app.post("/contacts/edit_contact/:contactId/:groupId", async (req, res) => {
   let contactId = req.params.contactId;
   let groupId = req.params.groupId;
 
   let toggled = await res.locals.store.toggleGroup(contactId, groupId);
   if (!toggled) throw new Error("Not found.");
 
-  res.redirect(`/contacts/${contactId}`);
+  res.redirect(`/contacts/edit_contact/${contactId}`);
 });
 
 //Create new group
@@ -147,18 +147,40 @@ app.post(
     let errors = validationResult(req);
 
     if (errors.isEmpty()) {
-      let created = res.locals.store.createGroup(groupName);
+      let created = await res.locals.store.createGroup(groupName);
       if (!created) throw new Error("Not found.");
 
       req.flash("success", "New group created!");
-      res.redirect(`/contacts/edit_groups/${contactId}`);
+      res.redirect(`/contacts/edit_contact/${contactId}`);
     } else {
       errors.array().forEach((message) => req.flash("error", message.msg));
 
-      res.redirect(`/contacts/edit_groups/${contactId}`);
+      res.redirect(`/contacts/edit_contact/${contactId}`);
     }
   }
 );
+
+//Delete group
+app.post("/contacts/delete_group/:contactId/:groupId", async (req, res) => {
+  let contactId = req.params.contactId;
+  let groupId = req.params.groupId;
+
+  let deleted = await res.locals.store.deleteGroup(groupId);
+  if (!deleted) throw new Error("Not found.");
+
+  req.flash("success", "Group deleted!");
+  res.redirect(`/contacts/edit_contact/${contactId}`);
+});
+
+//Delete contact
+app.post("/contacts/delete_contact/:contactId", async (req, res) => {
+  let contactId = req.params.contactId;
+  let deleted = await res.locals.store.deleteContact(contactId);
+
+  if (!deleted) throw new Error("Not found.");
+
+  res.redirect("/contacts");
+});
 
 // Error handler
 app.use((err, req, res, _next) => {

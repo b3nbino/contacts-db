@@ -1,7 +1,7 @@
 extends layout 
 
 block content
-  h2 Edit Groups
+  h2 Edit Contact
   table
     thead
       tr
@@ -17,9 +17,13 @@ block content
   ul 
     each group in allGroups
       li(class= contact.group_name.includes(`${group.group_name}`) ? "in" : "")
-        form(action=`/contacts/${contact.id}/${group.id}` method="post") 
+        form(action=`/contacts/edit_contact/${contact.id}/${group.id}` method="post") 
           button.group #{group.group_name}
+        form.delete(action=`/contacts/delete_group/${contact.id}/${group.id}` method="post") 
+          button.delete Delete
   div.centered
     form(action=`/contacts/create_group/${contactId}` method="post") 
       input.newGroup(type="text" name="groupName" id="groupName") 
       button.group Create Group
+    form(action=`/contacts/delete_contact/${contactId}` method="post") 
+      button.group Delete Contact
