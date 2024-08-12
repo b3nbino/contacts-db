@@ -11,6 +11,19 @@ const HOST = "localhost";
 const PORT = 3000;
 const LokiStore = store(session);
 
+let stringSort = (a, b) => {
+  let aLastName = a.last_name.toLowerCase();
+  let bLastName = b.last_name.toLowerCase();
+
+  if (aLastName > bLastName) {
+    return 1;
+  } else if (aLastName < bLastName) {
+    return -1;
+  } else {
+    return 0;
+  }
+};
+
 //Sets view engine and directory
 app.set("views", "./views");
 app.set("view engine", "pug");
@@ -60,6 +73,22 @@ app.get("/", (req, res) => {
 //Get contacts route handler
 app.get("/contacts", async (req, res) => {
   let contacts = await res.locals.store.getAllContacts();
+  res.render("contacts", { contacts });
+});
+
+//Get contacts sorted by name, or phone number
+app.get("/contacts/sorted/:sortBy", async (req, res) => {
+  let sortBy = req.params.sortBy;
+  let contacts = await res.locals.store.getAllContacts();
+
+  if (sortBy === "last_name") {
+    contacts.sort(stringSort);
+  } else if (sortBy === "phone_number") {
+    contacts.sort((a, b) => a.phone_number - b.phone_number);
+  }
+
+  console.log(contacts);
+
   res.render("contacts", { contacts });
 });
 
