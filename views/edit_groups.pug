@@ -19,3 +19,7 @@ block content
       li(class= contact.group_name.includes(`${group.group_name}`) ? "in" : "")
         form(action=`/contacts/${contact.id}/${group.id}` method="post") 
           button.group #{group.group_name}
+  div.centered
+    form(action=`/contacts/create_group/${contactId}` method="post") 
+      input.newGroup(type="text" name="groupName" id="groupName") 
+      button.group Create Group

@@ -149,6 +149,17 @@ button.cancel:hover {
   cursor: pointer;
 }
 
+input.newGroup {
+  border: 1px solid #a4a4a4;
+  border-radius: 8px;
+  font: normal 20px "PT Sans", Helvetica, Arial, sans-serif;
+  height: 15px;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding: 15px 20px;
+  width: 40%;
+}
+
 button.group {
   background-color: #00af4f;
   border: none;

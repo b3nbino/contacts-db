@@ -115,15 +115,15 @@ app.post(
 );
 
 //Get edit groups page
-app.get("/contacts/:contactId", async (req, res) => {
+app.get("/contacts/edit_groups/:contactId", async (req, res) => {
   let contactId = req.params.contactId;
   let contact = await res.locals.store.getContact(contactId);
   let allGroups = await res.locals.store.getGroups();
-  res.render("edit_groups", { contact, allGroups });
+  res.render("edit_groups", { contact, allGroups, contactId });
 });
 
 //Add or remove selected group
-app.post("/contacts/:contactId/:groupId", async (req, res) => {
+app.post("/contacts/edit_groups/:contactId/:groupId", async (req, res) => {
   let contactId = req.params.contactId;
   let groupId = req.params.groupId;
 
@@ -132,6 +132,33 @@ app.post("/contacts/:contactId/:groupId", async (req, res) => {
 
   res.redirect(`/contacts/${contactId}`);
 });
+
+//Create new group
+app.post(
+  "/contacts/create_group/:contactId",
+  [
+    body("groupName")
+      .isLength({ min: 1, max: 25 })
+      .withMessage("Group name must be between 1 and 25 characters."),
+  ],
+  async (req, res) => {
+    let groupName = req.body.groupName;
+    let contactId = req.params.contactId;
+    let errors = validationResult(req);
+
+    if (errors.isEmpty()) {
+      let created = res.locals.store.createGroup(groupName);
+      if (!created) throw new Error("Not found.");
+
+      req.flash("success", "New group created!");
+      res.redirect(`/contacts/edit_groups/${contactId}`);
+    } else {
+      errors.array().forEach((message) => req.flash("error", message.msg));
+
+      res.redirect(`/contacts/edit_groups/${contactId}`);
+    }
+  }
+);
 
 // Error handler
 app.use((err, req, res, _next) => {
