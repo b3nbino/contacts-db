@@ -21,7 +21,7 @@ block content
           button.group #{group.group_name}
         form.delete(action=`/contacts/delete_group/${contact.id}/${group.id}` method="post") 
           button.delete Delete
-  div.centered
+  div
     form(action=`/contacts/create_group/${contactId}` method="post") 
       input.newGroup(type="text" name="groupName" id="groupName") 
       button.group Create Group

@@ -222,13 +222,6 @@ div {
   color: #3399cc;
 }
 
-li.in,
-form {
-  color: #3399cc;
-  display: inline;
-  margin: 10px;
-}
-
 button.delete {
   background-color: transparent;
   border: none;
@@ -271,4 +264,9 @@ a.add:hover {
 
   -moz-transform: rotate(90deg);
   -webkit-transform: rotate(90deg);
+}
+
+form,
+li.in {
+  display: inline;
 }

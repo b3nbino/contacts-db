@@ -119,7 +119,15 @@ app.get("/contacts/edit_contact/:contactId", async (req, res) => {
   let contactId = req.params.contactId;
   let contact = await res.locals.store.getContact(contactId);
   let allGroups = await res.locals.store.getGroups();
-  res.render("edit_contact", { contact, allGroups, contactId });
+  if (!contact.group_name) {
+    contact.group_name = "";
+  }
+
+  res.render("edit_contact", {
+    contact,
+    allGroups,
+    contactId,
+  });
 });
 
 //Add or remove selected group
