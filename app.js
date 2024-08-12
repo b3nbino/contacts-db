@@ -16,11 +16,10 @@ app.set("views", "./views");
 app.set("view engine", "pug");
 
 //Middlewear setup, Tells express to:
-//use "public" folder to serve static files
-app.use(express.static("public"));
-app.use(express.urlencoded({ extended: false }));
-//use cookies for some session persistence
+app.use(express.static("public")); //use "public" folder to serve static files
+app.use(express.urlencoded({ extended: false })); //make it possible to read request body without use of a body parser
 app.use(
+  //use cookies for some session persistence
   session({
     cookie: {
       httpOnly: true,
@@ -35,8 +34,8 @@ app.use(
     store: new LokiStore({}),
   })
 );
-app.use(flash());
-app.use(morgan("common"));
+app.use(flash()); //persist flash messages
+app.use(morgan("common")); //log request data
 
 //Set session persistence
 app.use((req, res, next) => {
@@ -92,6 +91,7 @@ app.post(
     let errors = validationResult(req);
 
     if (errors.isEmpty()) {
+      //FIXME deny adding existing contact?
       let added = await res.locals.store.addContact(
         firstName,
         lastName,
