@@ -73,6 +73,18 @@ app.get("/", (req, res) => {
 //Get contacts route handler
 app.get("/contacts", async (req, res) => {
   let contacts = await res.locals.store.getAllContacts();
+  contacts.forEach((contact) => {
+    contact.group_name = contact.group_name.split(", ").sort((a, b) => {
+      if (a > b) {
+        return 1;
+      } else if (a < b) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+  });
+
   res.render("contacts", { contacts });
 });
 
@@ -85,9 +97,23 @@ app.get("/contacts/sorted/:sortBy", async (req, res) => {
     contacts.sort(stringSort);
   } else if (sortBy === "phone_number") {
     contacts.sort((a, b) => a.phone_number - b.phone_number);
+  } else {
+    contacts = contacts.filter((contact) =>
+      contact.group_name.includes(sortBy)
+    );
   }
 
-  console.log(contacts);
+  contacts.forEach((contact) => {
+    contact.group_name = contact.group_name.split(", ").sort((a, b) => {
+      if (a > b) {
+        return 1;
+      } else if (a < b) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+  });
 
   res.render("contacts", { contacts });
 });
