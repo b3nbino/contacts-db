@@ -7,10 +7,11 @@ const store = require("connect-loki");
 const ContactAPI = require("./lib/contacts-api");
 
 const app = express();
-const HOST = "localhost";
-const PORT = 3000;
+const HOST = process.env.HOST || "localhost";
+const PORT = process.env.PORT || 3000;
 const LokiStore = store(session);
 
+//Callback function used for sorting by contact.last_name passed into .sort()
 let stringSort = (a, b) => {
   let aLastName = a.last_name.toLowerCase();
   let bLastName = b.last_name.toLowerCase();
@@ -30,7 +31,7 @@ app.set("view engine", "pug");
 
 //Middlewear setup, Tells express to:
 app.use(express.static("public")); //use "public" folder to serve static files
-app.use(express.urlencoded({ extended: false })); //make it possible to read request body without use of a body parser
+app.use(express.urlencoded({ extended: false })); //make it possible to read request body(AKA form input) without use of a body parser
 app.use(
   //use cookies for some session persistence
   session({
@@ -112,16 +113,17 @@ app.post(
       .isLength({ min: 1, max: 25 })
       .withMessage("Last name must be between 1 and 25 characters."),
     body("phoneNumber")
-      .isLength({ min: 10, max: 10 })
+      .isLength({ min: 10, max: 12 })
       .withMessage("Please enter a valid phone number."),
   ],
   async (req, res) => {
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
-    let phoneNumber = req.body.phoneNumber;
+    let phoneNumber = req.body.phoneNumber.replace(/[^\d]/g, "");
     let contacts = await res.locals.store.getAllContacts();
     let errors = validationResult(req);
 
+    //Checks for existing phone number
     if (contacts.some((contact) => contact.phone_number === phoneNumber)) {
       errors.errors.push({
         type: "field",
@@ -130,10 +132,19 @@ app.post(
         path: "phoneNumber",
         location: "body",
       });
+    } else if (!phoneNumber.match(/^\d{10}$/)) {
+      //Checks for valid phone number
+      errors.errors.push({
+        type: "field",
+        value: "",
+        msg: "Please enter a valid phone number",
+        path: "phoneNumber",
+        location: "body",
+      });
     }
 
+    //Create new contact in db
     if (errors.isEmpty()) {
-      //FIXME deny adding existing contact?
       let added = await res.locals.store.addContact(
         firstName,
         lastName,
@@ -144,6 +155,7 @@ app.post(
       req.flash("success", "New contact added!");
       res.redirect("/contacts");
     } else {
+      //Re-render new contact page with flash messages
       errors.array().forEach((message) => req.flash("error", message.msg));
 
       res.render("new_contact", {
