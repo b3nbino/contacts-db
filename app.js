@@ -209,6 +209,7 @@ app.post(
     let groups = await res.locals.store.getGroups();
     let errors = validationResult(req);
 
+    //Checks for groups with same name as user input
     if (groups.some((group) => group.group_name === groupName)) {
       errors.errors.push({
         type: "field",
@@ -220,12 +221,14 @@ app.post(
     }
 
     if (errors.isEmpty()) {
+      //Add new group to db
       let created = await res.locals.store.createGroup(groupName);
       if (!created) throw new Error("Not found.");
 
       req.flash("success", "New group created!");
       res.redirect(`/contacts/edit_contact/${contactId}`);
     } else {
+      //Add error flash messages to req
       errors.array().forEach((message) => req.flash("error", message.msg));
 
       res.redirect(`/contacts/edit_contact/${contactId}`);
