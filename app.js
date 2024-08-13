@@ -119,7 +119,18 @@ app.post(
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     let phoneNumber = req.body.phoneNumber;
+    let contacts = await res.locals.store.getAllContacts();
     let errors = validationResult(req);
+
+    if (contacts.some((contact) => contact.phone_number === phoneNumber)) {
+      errors.errors.push({
+        type: "field",
+        value: "",
+        msg: "Phone number already in contacts.",
+        path: "phoneNumber",
+        location: "body",
+      });
+    }
 
     if (errors.isEmpty()) {
       //FIXME deny adding existing contact?
@@ -183,7 +194,18 @@ app.post(
   async (req, res) => {
     let groupName = req.body.groupName;
     let contactId = req.params.contactId;
+    let groups = await res.locals.store.getGroups();
     let errors = validationResult(req);
+
+    if (groups.some((group) => group.group_name === groupName)) {
+      errors.errors.push({
+        type: "field",
+        value: "",
+        msg: "Group already exists.",
+        path: "groupName",
+        location: "body",
+      });
+    }
 
     if (errors.isEmpty()) {
       let created = await res.locals.store.createGroup(groupName);
