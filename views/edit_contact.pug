@@ -25,5 +25,5 @@ block content
     form(action=`/contacts/create_group/${contactId}` method="post") 
       input.newGroup(type="text" name="groupName" id="groupName") 
       button.group Create Group
-    form(action=`/contacts/delete_contact/${contactId}` method="post") 
+    form.delete(action=`/contacts/delete_contact/${contactId}` method="post") 
       button.group Delete Contact
