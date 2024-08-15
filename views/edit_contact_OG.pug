@@ -1,0 +1,29 @@
+extends layout 
+
+block content
+  h2 Edit Contact
+  table
+    thead
+      tr
+        th Name
+        th Phone Number
+        th Groups
+    tbody
+      tr
+        td #{contact.last_name}, #{contact.first_name}
+        td (#{contact.phone_number.slice(0, 3)})-#{contact.phone_number.slice(3, 6)}-#{contact.phone_number.slice(6)}
+        td #{contact.group_name} 
+  
+  ul 
+    each group in allGroups
+      li(class= contact.group_name.includes(`${group.group_name}`) ? "in" : "")
+        form(action=`/contacts/edit_contact/${contact.id}/${group.id}` method="post") 
+          button.group #{group.group_name}
+        form.delete(action=`/contacts/delete_group/${contact.id}/${group.id}` method="post") 
+          button.delete Delete
+  div
+    form(action=`/contacts/create_group/${contactId}` method="post") 
+      input.newGroup(type="text" name="groupName" id="groupName") 
+      button.group Create Group
+    form.delete(action=`/contacts/delete_contact/${contactId}` method="post") 
+      button.group Delete Contact

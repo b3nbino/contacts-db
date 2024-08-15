@@ -122,7 +122,7 @@ app.post(
       .isLength({ min: 1, max: 25 })
       .withMessage("Last name must be between 1 and 25 characters."),
     body("phoneNumber")
-      .isLength({ min: 10, max: 12 })
+      .isLength({ min: 10, max: 14 })
       .withMessage("Please enter a valid phone number."),
   ],
   catchError(async (req, res) => {
@@ -177,14 +177,16 @@ app.post(
   })
 );
 
-//Get edit groups page
+//Get edit contact page
 app.get(
-  "/contacts/edit_contact/:contactId",
+  "/contacts/edit-contact/:contactId",
   catchError(async (req, res) => {
     let contactId = req.params.contactId;
     let contact = await res.locals.store.getContact(contactId);
     let allGroups = await res.locals.store.getGroups();
-    if (!contact.group_name) {
+    if (contact === undefined) {
+      next(new Error("Not found."));
+    } else if (!contact.group_name) {
       contact.group_name = "";
     }
 
@@ -196,9 +198,96 @@ app.get(
   })
 );
 
+//Update contact info
+app.post(
+  "/contacts/edit-contact/:contactId",
+  [
+    body("firstName")
+      .optional()
+      .trim()
+      .isLength({ max: 25 })
+      .withMessage("First name must be between 1 and 25 characters."),
+    body("lastName")
+      .optional()
+      .trim()
+      .isLength({ max: 25 })
+      .withMessage("Last name must be between 1 and 25 characters."),
+    body("phoneNumber")
+      .optional()
+      .isLength({ max: 14 })
+      .withMessage("Phone number length exceeded."),
+  ],
+  catchError(async (req, res) => {
+    //Retreive values or set to empty string
+    let firstName = req.body.firstName || "";
+    let lastName = req.body.lastName || "";
+    let phoneNumber = req.body.phoneNumber
+      ? req.body.phoneNumber.replace(/[^\d]/g, "")
+      : "";
+    let contacts = await res.locals.store.getAllContacts();
+    let contactId = req.params.contactId;
+    let contact = await res.locals.store.getContact(contactId);
+    let errors = validationResult(req);
+
+    //Checks for existing phone number
+    if (phoneNumber) {
+      if (
+        contacts.some(
+          (contact) =>
+            contact.phone_number === phoneNumber && contact.id !== contactId
+        )
+      ) {
+        errors.errors.push({
+          type: "field",
+          value: "",
+          msg: "Phone number already in contacts.",
+          path: "phoneNumber",
+          location: "body",
+        });
+      } else if (!phoneNumber.match(/^\d{10}$/)) {
+        //Checks for valid phone number
+        errors.errors.push({
+          type: "field",
+          value: "",
+          msg: "Please enter a valid phone number.",
+          path: "phoneNumber",
+          location: "body",
+        });
+      }
+    }
+
+    console.log(firstName);
+    console.log(lastName);
+    console.log(phoneNumber);
+
+    if (errors.isEmpty()) {
+      let updated;
+      if (firstName && firstName !== contact.first_name) {
+        updated = await res.locals.store.updateFirstName(firstName, contactId);
+        if (!updated) throw new Error("First name not updated.");
+      }
+      if (lastName && lastName !== contact.last_name) {
+        updated = await res.locals.store.updateLastName(lastName, contactId);
+        if (!updated) throw new Error("Last name not updated.");
+      }
+      if (phoneNumber && phoneNumber !== contact.phone_number) {
+        updated = await res.locals.store.updatePhoneNumber(
+          phoneNumber,
+          contactId
+        );
+        if (!updated) throw new Error("Phone number not updated.");
+      }
+      res.redirect(`/contacts/edit-contact/${contactId}`);
+    } else {
+      errors.array().forEach((error) => req.flash("error", error.msg));
+      res.redirect(`/contacts/edit-contact/${contactId}`);
+    }
+  })
+);
+
 //Add or remove selected group
 app.post(
-  "/contacts/edit_contact/:contactId/:groupId",
+  "/contacts/edit-contact/:contactId/:groupId",
   catchError(async (req, res) => {
     let contactId = req.params.contactId;
     let groupId = req.params.groupId;
@@ -206,7 +295,7 @@ app.post(
     let toggled = await res.locals.store.toggleGroup(contactId, groupId);
     if (!toggled) throw new Error("Not found.");
 
-    res.redirect(`/contacts/edit_contact/${contactId}`);
+    res.redirect(`/contacts/edit-contact/${contactId}`);
   })
 );
 
@@ -241,12 +330,12 @@ app.post(
       if (!created) throw new Error("Not found.");
 
       req.flash("success", "New group created!");
-      res.redirect(`/contacts/edit_contact/${contactId}`);
+      res.redirect(`/contacts/edit-contact/${contactId}`);
     } else {
       //Add error flash messages to req
       errors.array().forEach((message) => req.flash("error", message.msg));
 
-      res.redirect(`/contacts/edit_contact/${contactId}`);
+      res.redirect(`/contacts/edit-contact/${contactId}`);
     }
   })
 );
@@ -262,7 +351,7 @@ app.post(
     if (!deleted) throw new Error("Not found.");
 
     req.flash("success", "Group deleted!");
-    res.redirect(`/contacts/edit_contact/${contactId}`);
+    res.redirect(`/contacts/edit-contact/${contactId}`);
   })
 );
 
@@ -285,6 +374,7 @@ app.use((err, req, res, _next) => {
   res.status(404).send(err.message);
 });
 
+//Server listen
 app.listen(PORT, HOST, () => {
   console.log(`Server is now listening on ${HOST} port ${PORT}`);
 });

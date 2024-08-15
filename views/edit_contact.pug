@@ -2,22 +2,40 @@ extends layout
 
 block content
   h2 Edit Contact
+   div.centered
+    form(action=`/contacts/edit-contact/${contactId}` method="post") 
+      fieldset 
+        dl 
+          dt
+            label(for="firstName") First Name:
+          dd
+            input(type="text" name="firstName" id="firstName" placeholder=contact.first_name)
+        dl 
+          dt
+            label(for="lastName") Last Name: 
+          dd
+            input(type="text" name="lastName" id="lastName" placeholder=contact.last_name)
+        dl
+          dt
+            label(for="phoneNumber") Phone Number: 
+          dd
+            input(type="text" name="phoneNumber" id="phoneNumber" placeholder=`(${contact.phone_number.slice(0, 3)})-${contact.phone_number.slice(3, 6)}-${contact.phone_number.slice(6)}`)
+        fieldset
+          input(type="submit" value="Save")
+          button.cancel(formaction="/contacts" formmethod="get") Cancel
+
   table
     thead
       tr
-        th Name
-        th Phone Number
-        th Groups
-    tbody
-      tr
-        td #{contact.last_name}, #{contact.first_name}
-        td (#{contact.phone_number.slice(0, 3)})-#{contact.phone_number.slice(3, 6)}-#{contact.phone_number.slice(6)}
-        td #{contact.group_name} 
+        th Groups 
+    tbody 
+      tr 
+        td #{contact.group_name}
   
   ul 
     each group in allGroups
       li(class= contact.group_name.includes(`${group.group_name}`) ? "in" : "")
-        form(action=`/contacts/edit_contact/${contact.id}/${group.id}` method="post") 
+        form(action=`/contacts/edit-contact/${contact.id}/${group.id}` method="post") 
           button.group #{group.group_name}
         form.delete(action=`/contacts/delete_group/${contact.id}/${group.id}` method="post") 
           button.delete Delete
