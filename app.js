@@ -28,6 +28,14 @@ let stringSort = (a, b) => {
   }
 };
 
+function requiresAuthentication(req, res, next) {
+  if (!res.locals.signedIn) {
+    res.redirect("/contacts/sign-in");
+  } else {
+    next();
+  }
+}
+
 //Sets view engine and directory
 app.set("views", "./views");
 app.set("view engine", "pug");
@@ -77,6 +85,7 @@ app.get("/", (req, res) => {
 //Get contacts route handler
 app.get(
   "/contacts",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let contacts = await res.locals.store.getAllContacts();
     res.render("contacts", { contacts });
@@ -86,6 +95,7 @@ app.get(
 //Get contacts sorted by name, or phone number
 app.get(
   "/contacts/sorted/:sortBy",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let sortBy = req.params.sortBy;
     let contacts = await res.locals.store.getAllContacts();
@@ -105,13 +115,14 @@ app.get(
 );
 
 //Get contact creation page
-app.get("/contacts/new", (req, res) => {
+app.get("/contacts/new", requiresAuthentication, (req, res) => {
   res.render("new_contact");
 });
 
 //Add a new contact
 app.post(
   "/contacts/new",
+  requiresAuthentication,
   [
     body("firstName")
       .trim()
@@ -180,6 +191,7 @@ app.post(
 //Get edit contact page
 app.get(
   "/contacts/edit-contact/:contactId",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let contactId = req.params.contactId;
     let contact = await res.locals.store.getContact(contactId);
@@ -201,6 +213,7 @@ app.get(
 //Update contact info
 app.post(
   "/contacts/edit-contact/:contactId",
+  requiresAuthentication,
   [
     body("firstName")
       .optional()
@@ -256,10 +269,6 @@ app.post(
       }
     }
 
-    console.log(firstName);
-    console.log(lastName);
-    console.log(phoneNumber);
-
     if (errors.isEmpty()) {
       let updated;
       if (firstName && firstName !== contact.first_name) {
@@ -288,6 +297,7 @@ app.post(
 //Add or remove selected group
 app.post(
   "/contacts/edit-contact/:contactId/:groupId",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let contactId = req.params.contactId;
     let groupId = req.params.groupId;
@@ -302,6 +312,7 @@ app.post(
 //Create new group
 app.post(
   "/contacts/create_group/:contactId",
+  requiresAuthentication,
   [
     body("groupName")
       .isLength({ min: 1, max: 25 })
@@ -343,6 +354,7 @@ app.post(
 //Delete group
 app.post(
   "/contacts/delete_group/:contactId/:groupId",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let contactId = req.params.contactId;
     let groupId = req.params.groupId;
@@ -358,6 +370,7 @@ app.post(
 //Delete contact
 app.post(
   "/contacts/delete_contact/:contactId",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let contactId = req.params.contactId;
     let deleted = await res.locals.store.deleteContact(contactId);
@@ -367,6 +380,35 @@ app.post(
     res.redirect("/contacts");
   })
 );
+
+app.get("/contacts/sign-in", (req, res) => {
+  res.render("sign_in");
+});
+
+//Sign-in
+app.post(
+  "/contacts/sign-in",
+  catchError(async (req, res) => {
+    let username = req.body.username;
+    let password = req.body.password;
+
+    if (username === "admin" && password === "secret") {
+      req.session.username = username;
+      req.session.signedIn = true;
+      res.redirect("/contacts");
+    } else {
+      req.flash("error", "Incorrect username or password.");
+      res.render("sign_in", { username, flash: req.flash() });
+    }
+  })
+);
+
+//Sign-out
+app.post("/contacts/sign-out", (req, res) => {
+  delete req.session.username;
+  delete req.session.signedIn;
+  res.redirect("/contacts/sign-in");
+});
 
 // Error handler
 app.use((err, req, res, _next) => {

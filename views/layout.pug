@@ -11,6 +11,8 @@ html(lang="en-US")
     header
       h1 
         a(href="/contacts") My Contacts Manager
+      if signedIn
+        p Signed in as: #{username}
 
     - let messageTypes = Object.keys(flash || {});
     if messageTypes.length > 0
@@ -21,3 +23,8 @@ html(lang="en-US")
 
     main
       block content
+
+    if signedIn 
+      footer 
+        form(action="/contacts/sign-out" method="post")
+          button.group Sign-Out

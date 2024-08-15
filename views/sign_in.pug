@@ -1,0 +1,20 @@
+extends layout 
+
+block content
+  h2 Sign-in
+  div.centered
+    form(action="/contacts/sign-in" method="post") 
+      fieldset 
+        dl 
+          dt
+            label(for="username") Username:
+          dd
+            input(type="text" name="username" id="username" value=username)
+        dl 
+          dt
+            label(for="password") Password: 
+          dd
+            input(type="text" name="password" id="password")
+        fieldset
+            input(type="submit" value="Sign-in")
+            button.cancel(formaction="/contacts" formmethod="get") Cancel

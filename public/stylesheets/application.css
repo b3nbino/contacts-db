@@ -21,6 +21,10 @@ h1 {
   font-size: 2rem;
 }
 
+p {
+  text-align: center;
+}
+
 h1,
 a {
   text-decoration: none;
