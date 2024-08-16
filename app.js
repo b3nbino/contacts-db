@@ -55,7 +55,7 @@ app.use(
     name: "launch-school-contacts-session-id",
     resave: false,
     saveUninitialized: true,
-    secret: "Extremely safe cookie here guys",
+    secret: process.env.SECRET,
     store: new LokiStore({}),
   })
 );
