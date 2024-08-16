@@ -1,0 +1,2 @@
+INSERT INTO users VALUES
+('admin', '$2b$10$psw6YKI.mkHEhuVQY3E8iey3E1v4jW9p7V0j9Jog.4xM3tEtTu6g6'), ('ruler', '$2b$10$WWsuID3taXECPW5vK7qTP.gS9w6FxfPi/OXsPR3yMYckglSyIKzsC'), ('geribald', 'pancakeLover');

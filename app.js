@@ -392,7 +392,7 @@ app.post(
     let username = req.body.username;
     let password = req.body.password;
 
-    if (username === "admin" && password === "secret") {
+    if (await res.locals.store.login(username, password)) {
       req.session.username = username;
       req.session.signedIn = true;
       res.redirect("/contacts");
